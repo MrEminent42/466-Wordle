@@ -33,15 +33,14 @@ def encode_word(word: str) -> np.ndarray:
 
 
 np.random.seed(0)
-words = np.loadtxt("./answers.txt", dtype=str)
-words = np.random.choice(words, SAMPLE_SIZE)
+WORDS = np.random.choice(np.loadtxt("./answers.txt", dtype=str), SAMPLE_SIZE)
 
-encoded_words = np.array([encode_word(word) for word in words])
+ENCODED_WORDS = np.array([encode_word(word) for word in WORDS])
 
 
 class State:
     def __init__(self, word_index: int):
-        self._goal_word = encoded_words[word_index]
+        self._goal_word = ENCODED_WORDS[word_index]
         self._board_letters = np.zeros((6, 5))
         self._board_mask = np.zeros((6, 5, 2))
         self._guess_number = 0
@@ -96,10 +95,21 @@ class State:
         self._guess_number += 1
         self._has_won = won
 
+    def flattened_state(self):
+        letters = IDENTITY[self._board_letters.astype(np.int32)]
 
-test_state = State(1)
-test_state.guess(encoded_words[4])
-test_state.guess(encoded_words[14])
-test_state.guess(encoded_words[0])
-test_state.guess(encoded_words[1])
-print(test_state)
+        return np.concatenate(
+            [letters.flatten(), self._board_mask.flatten()],
+        )
+
+    def flattened_state_and_action(self, action: int):
+        one_hot_action = IDENTITY[ENCODED_WORDS[action]].flatten()
+        return np.concatenate([self.flattened_state(), one_hot_action])
+
+
+if __name__ == "__main__":
+    state = State(1)
+    state.guess(ENCODED_WORDS[2])
+    state.guess(ENCODED_WORDS[3])
+    state.guess(ENCODED_WORDS[1])
+    print(state.flattened_state_and_action(0).shape)
