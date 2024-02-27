@@ -2,8 +2,8 @@ import numpy as np
 from simple_colors import *
 from collections import Counter
 
-SAMPLE_SIZE = 100
-IDENTITY = np.eye(26)
+SAMPLE_SIZE = 32
+IDENTITY = np.eye(26).astype(np.int32)
 
 
 @np.vectorize
@@ -94,6 +94,16 @@ class State:
         self._board_letters[self._guess_number] = word
         self._guess_number += 1
         self._has_won = won
+
+    def copy(self):
+        new_state = State(0)
+        new_state._goal_word = self._goal_word.copy()
+        new_state._board_letters = self._board_letters.copy()
+        new_state._board_mask = self._board_mask.copy()
+        new_state._guess_number = self._guess_number
+        new_state._has_won = self._has_won
+
+        return new_state
 
     def flattened_state(self):
         letters = IDENTITY[self._board_letters.astype(np.int32)]
