@@ -83,13 +83,17 @@ class State:
             if count > 0:
                 if self._goal_word[i] == guess:
                     self._board_mask[self._guess_number, i][1] = 1
-                else:
-                    self._board_mask[self._guess_number, i][0] = 1
-
-                counter[guess] -= 1
-
+                    counter[guess] -= 1
             else:
                 won = False
+
+        for i in range(5):
+            guess = word[i]
+            count = counter[guess]
+            if count > 0:
+                if self._goal_word[i] != guess:
+                    self._board_mask[self._guess_number, i][0] = 1
+                    counter[guess] -= 1
 
         self._board_letters[self._guess_number] = word
         self._guess_number += 1
@@ -119,7 +123,5 @@ class State:
 
 if __name__ == "__main__":
     state = State(1)
-    state.guess(ENCODED_WORDS[2])
-    state.guess(ENCODED_WORDS[3])
-    state.guess(ENCODED_WORDS[1])
-    print(state.flattened_state_and_action(0).shape)
+    state.guess(np.array([1, 1, 1, 1, 1]))
+    print(state)
