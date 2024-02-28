@@ -66,24 +66,25 @@ def policy_reward(state: State, print_result=False):
 
 sample_buffer = deque(maxlen=1000)
 
-# print("Creating a sample buffer:")
-# for i in range(100):
-#     state = State(np.random.randint(0, len(ENCODED_WORDS)))
+print("Creating a sample buffer:")
+for i in range(1000):
+    state = State(np.random.randint(0, len(ENCODED_WORDS)))
+    print(i)
 
-#     while not state.is_complete:
-#         sample_buffer.append(state.copy())
+    while not state.is_complete:
+        sample_buffer.append(state.copy())
 
-#         inputs = np.array(
-#             [state.flattened_state_and_action(i) for i in range(len(ENCODED_WORDS))]
-#         )
-#         res = model_qp.predict(inputs)
-#         best_action = np.argmax(res)
-#         state.guess(ENCODED_WORDS[best_action])
+        inputs = np.array(
+            [state.flattened_state_and_action(i) for i in range(len(ENCODED_WORDS))]
+        )
+        res = model_qp.predict(inputs, verbose=0)
+        best_action = np.argmax(res)
+        state.guess(ENCODED_WORDS[best_action])
 
-# random.shuffle(sample_buffer)
+random.shuffle(sample_buffer)
 
-# with open("sample_buffer.pickle", "wb") as pickle_file:
-#     pickle.dump(sample_buffer, pickle_file)
+with open("sample_buffer.pickle", "wb") as pickle_file:
+    pickle.dump(sample_buffer, pickle_file)
 
 while True:
     with open("sample_buffer.pickle", "rb") as pickle_file:
@@ -92,7 +93,7 @@ while True:
     print("Creating test dataset...")
     train, label = [], []
     reward_sum = 0
-    for i in range(50):
+    for i in range(20):
         start_state = sample_buffer.pop()
         reward_sum += policy_reward(start_state)
         check_actions = np.random.choice(len(ENCODED_WORDS), 10)

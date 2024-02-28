@@ -2,7 +2,7 @@ import numpy as np
 from simple_colors import *
 from collections import Counter
 
-SAMPLE_SIZE = 32
+SAMPLE_SIZE = 100
 IDENTITY = np.eye(26).astype(np.int32)
 
 
