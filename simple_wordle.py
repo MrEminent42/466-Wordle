@@ -120,6 +120,9 @@ class State:
         one_hot_action = IDENTITY[ENCODED_WORDS[action]].flatten()
         return np.concatenate([self.flattened_state(), one_hot_action])
 
+    def num_green(self):
+        return np.sum(self._board_mask[:, :, 1])
+
 
 if __name__ == "__main__":
     state = State(1)
